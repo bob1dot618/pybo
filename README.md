@@ -1,0 +1,4 @@
+pybo
+====
+
+Python bot simulator
