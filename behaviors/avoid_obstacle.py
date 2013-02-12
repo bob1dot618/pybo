@@ -11,7 +11,8 @@ def detect(x, g, obstacles, env):
     return not cp
 
 def action(x, g, obstacles, env):
-    d,(o,r) = min((distance(x,obst[0]), obst) for obst in obstacles)
+    d,(o,r,v) = min((distance(x,obst[0]), obst) for obst in obstacles)
+    env['TARGET'].pos = o
     if d > r + env['ROBOT_RADIUS'] + 2:
         # just go-to-goal
         return math.atan2(g[1] - x[1], g[0] - x[0]), env['BASE_VELOCITY']

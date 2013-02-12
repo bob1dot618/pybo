@@ -60,7 +60,7 @@ def clear_path(a, there, obstacles):
     there = vector(there)
     n = norm(there - a)
 
-    for o,radius in obstacles:
+    for o,radius,v in obstacles:
         p = vector(o)
         # compute distance from point to line in vector notation
         pp = a - p
@@ -80,8 +80,8 @@ create_grid(40)
 robot = cylinder(pos=robot_position, axis=(0,0,1), radius=ROBOT_RADIUS, color=color.blue)
 fwd_arrow = arrow(pos=robot_position + vector(0,0,.5), axis=(2,0,0), shaftwidth=0.3, color=color.red)
 
-# create the visual representations of the obstacles
-vobsts = [cylinder(pos=opos, axis=(0,0,.1), radius=radius, color=color.red, opacity=OPACITY) for opos,radius in obstacles]
+# create the visual representations of the obstacles, add to obstacles as third element
+obstacles = [(opos, radius, cylinder(pos=opos, axis=(0,0,.1), radius=radius, color=color.red, opacity=OPACITY)) for opos,radius in obstacles]
 
 # this dot is to show the currently active goal or obstacle.
 target = cylinder(pos=goal_position, axis=(0,0,.2), radius=.3, color=color.white)
@@ -117,9 +117,10 @@ seen_obstacles = set()
 
 environment = { 
     'BASE_VELOCITY' : base_velocity, 
-    'ROBOT_RADIUS' : ROBOT_RADIUS, 
-    'CLEAR_PATH' : clear_path,
-    'PHI' : 0
+    'ROBOT_RADIUS'  : ROBOT_RADIUS, 
+    'CLEAR_PATH'    : clear_path,
+    'PHI'           : 0,
+    'TARGET'        : target,
 }
 
 while True:
@@ -137,9 +138,7 @@ while True:
         d_obst = distance(obst[0], x)
         if d_obst < ROBOT_RADIUS + obst[1] + 2:
             seen_obstacles.add(obst)
-            vobst = next(x for x in vobsts if x.pos == obst[0])
-            if vobst:
-                vobst.opacity = 1.0
+            obst[2].opacity = 1.0
 
 # This section is the 'behavior' section. It picks a direction (p) for the robot to drive
 # look in the 'behaviors' directory to find the behaviors that are being tried here.
